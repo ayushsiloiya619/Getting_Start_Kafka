@@ -16,26 +16,24 @@ Visit the [Docker website](https://www.docker.com/) and install Docker on your s
 Create a `docker-compose.yml` file to define the services for your Kafka setup. Here’s an example configuration:
 
 ```yaml
-version: '3.8'
+version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+    image: zookeeper:3.6.3
     ports:
       - "2181:2181"
-
   kafka:
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    image: wurstmeister/kafka:2.13-2.7.0
     ports:
       - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 ```
 
 ### 3. Start Docker Services
